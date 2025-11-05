@@ -143,4 +143,15 @@ Spikes: BW-004
 Ink: IC-005
 
 License
+
 This project is for educational purposes. All Nintendo and Splatoon rights belong to their respective owners.
+
+=== UPDATE LOG 1 ===
+- 3 New skin types:
+    - Possesed
+    - Astral
+    - Power
+    - Virtual
+- New Code: PatchedBug (Gives TriStar, a new buggy Prototype based on the first bug when animating the image)
+- New recolors to their respective skins (Giving the cap of skin meters +3200)
+- Spaced a bit more the meter rewards to give more value to the gameplay.
