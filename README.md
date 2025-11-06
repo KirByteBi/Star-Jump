@@ -155,3 +155,12 @@ This project is for educational purposes. All Nintendo and Splatoon rights belon
 - New Code: PatchedBug (Gives TriStar, a new buggy Prototype based on the first bug when animating the image)
 - New recolors to their respective skins (Giving the cap of skin meters +3200)
 - Spaced a bit more the meter rewards to give more value to the gameplay.
+=== UPDATE LOG 1.5 ===
+- Added a progress save, aswell a reset button for antibug, oh and also check the INFO section! There might be the update log too.
+- Thanks to Pevo with the testing.
+[CREDITS]
+- KirByteBi as the owner, made the game, the arts for Astral, Possesed, Power and Virtual skins, also the Squid skin is made by him. Platforms also were made by this little fella.
+- MikaNBC for Star draws, and logo + banner!
+- Pevo for the testing, I enjoy getting this friends tho.
+- And all the guys playing this game! It helps me alot, Kirb whould be prown of you.
+Remember to use PatchedBug ;)
