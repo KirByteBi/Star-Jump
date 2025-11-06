@@ -167,4 +167,5 @@ This project is for educational purposes. All Nintendo and Splatoon rights belon
 - And all the guys playing this game! It helps me alot, Kirb whould be prown of you.
 Remember to use PatchedBug ;)
 
-
+=== UPDATE LOG 1.5-5 ===
+- Changed title name, the "subtitle" is now "Return to Space"
