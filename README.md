@@ -32,7 +32,7 @@ Basic colors: 100m - 400m
 
 Premium skins: 450m - 2025m
 
-Special Amiibo skins: Use codes (WD-001, MK-002, D3-003, BW-004, IC-005)
+Special Amiibo skins: Use codes related to amiibos, for example WD-001
 
 Changelog
 Version 1.0 - Initial Release
@@ -160,12 +160,20 @@ This project is for educational purposes. All Nintendo and Splatoon rights belon
 - Added a progress save, aswell a reset button for antibug, oh and also check the INFO section! There might be the update log too.
 - Thanks to Pevo with the testing.
 
+=== UPDATE LOG 2.5.1 ===
+- New skins begin Power, Virtual, Possesed and Angelical
+- New skins begin Rainbow version of new skins of this update
+- A secret debug code?? Yeah this may be helpfull once you figure how to get 'em.
+
+Remember to use PatchedBug ;)
+It's on the game logs too so you don't miss this code or the updates.
+
 [CREDITS]
 - KirByteBi as the owner, made the game, the arts for Astral, Possesed, Power and Virtual skins, also the Squid skin is made by him. Platforms also were made by this little fella.
 - MikaNBC for Star draws, and logo + banner!
 - Pevo for the testing, I enjoy getting this friends tho.
 - And all the guys playing this game! It helps me alot, Kirb whould be prown of you.
-Remember to use PatchedBug ;)
+
 
 === UPDATE LOG 1.5-5 ===
 - Changed title name, the "subtitle" is now "Return to Space"
