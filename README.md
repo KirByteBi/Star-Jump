@@ -134,13 +134,13 @@ By Codes:
 
 Loyal: WD-001
 
-Galaxy: MK-002
+Galaxy: something about MK
 
-King: D3-003
+King: Three Ds are so kind
 
-Spikes: BW-004
+Spikes: I guess it has something with a B and two Vs
 
-Ink: IC-005
+Ink: Rainbow default Stae huh? Maybe the name and a C could be usefull
 
 License
 
