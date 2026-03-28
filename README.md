@@ -130,6 +130,18 @@ Demonic: 1950m
 
 Squid: 2025m
 
+Powered + Colors: Between 2200 and 2800. Power? Who said a Star can be that powerfull...
+
+Virtual + Colors: Between 3000 and 3600. Refencing Pyces.
+
+Possesed + Colors: On 3800 and 4400. And I must say reaching this darkness star must not be luck, you got choosen by him.
+
+Astral + Colors: On 4800 and 4850. You went to heaven bro, you must be dedicated to this.
+
+Squid Recolors: 4900 and 5200. Some recolors for the squid army.
+
+Rainbow V2 Pack: 6050 and 8600, must say you didn't touch grass for this... Those were exclusive from debug but realised that whould be unfair. 
+
 By Codes:
 
 Loyal: WD-001
@@ -140,7 +152,11 @@ King: Three Ds are so kind
 
 Spikes: I guess it has something with a B and two Vs
 
-Ink: Rainbow default Stae huh? Maybe the name and a C could be usefull
+Ink: Rainbow default Star huh? Maybe the name and a C could be usefull
+
+TriStar: Search the code here or in the logs, you decide!
+
+Pink Virtude: Debug code, like a web or something.
 
 License
 
@@ -161,7 +177,7 @@ This project is for educational purposes. All Nintendo and Splatoon rights belon
 - Thanks to Pevo with the testing.
 
 === UPDATE LOG 2.5.1 ===
-- New skins begin Power, Virtual, Possesed and Angelical
+- New skins begin Power, Virtual, Possesed and Astral
 - New skins begin Rainbow version of new skins of this update
 - A secret debug code?? Yeah this may be helpfull once you figure how to get 'em.
 
