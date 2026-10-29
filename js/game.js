@@ -54,7 +54,8 @@
         let demoIdleTimer = null;        // temporizador de inactividad en el menú
         let demoTargetMeters = 0;        // metros a los que el bot se deja morir
         let prevSkinBeforeDemo = null;   // skin a restaurar al salir de la demo
-        const DEMO_IDLE_MS = 15000;      // 15 s de inactividad en el menú -> demo
+        const DEMO_IDLE_MS = 15000;          // inactividad en el menú principal -> demo
+        const DEMO_IDLE_MS_SKINS = 30000;    // en la sección SKINS tarda más (el jugador suele mirar)
         let currentLanguage = 'en';
         let currentSkin = 'default';
         let unlockedSkins = ['default'];
@@ -1061,7 +1062,11 @@
             cancelDemoTimer();
             // Solo programa la demo si estamos en el menú (startScreen visible)
             if (startScreen.classList.contains('hidden')) return;
-            demoIdleTimer = setTimeout(startDemo, DEMO_IDLE_MS);
+            // En la sección SKINS tarda más en saltar (el jugador suele estar mirando).
+            const skinsSection = document.getElementById('skins-section');
+            const inSkins = skinsSection && !skinsSection.classList.contains('hidden');
+            const delay = inSkins ? DEMO_IDLE_MS_SKINS : DEMO_IDLE_MS;
+            demoIdleTimer = setTimeout(startDemo, delay);
         }
 
         function cancelDemoTimer() {
@@ -1288,6 +1293,7 @@
             setInterval(() => { if (gameRunning) saveGameData(); }, 30000);
 
             // ----- Demo / attract mode: actividad del usuario -----
+            // Clic/tecla/toque: en demo -> salir al menú; en menú -> reiniciar contador.
             // En captura, para interceptar antes que los botones del menú cuando hay demo.
             ['pointerdown', 'keydown', 'touchstart'].forEach(ev => {
                 document.addEventListener(ev, (e) => {
@@ -1300,6 +1306,17 @@
                         onUserActivity();
                     }
                 }, true);
+            });
+            // Movimiento del ratón: cuenta como actividad SOLO en el menú (reinicia el
+            // contador, así la demo no salta mientras mueves el ratón). No corta una demo
+            // ya activa (para eso hay que hacer clic/tocar/pulsar una tecla).
+            let demoMoveThrottle = 0;
+            document.addEventListener('mousemove', () => {
+                if (demoMode) return;
+                const now = Date.now();
+                if (now - demoMoveThrottle < 400) return; // throttle: no reprogramar en cada píxel
+                demoMoveThrottle = now;
+                onUserActivity();
             });
             // Arrancar el contador de inactividad al cargar (estamos en el menú)
             scheduleDemo();
