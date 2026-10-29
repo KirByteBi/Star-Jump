@@ -35,6 +35,17 @@ Premium skins: 450m - 2025m
 Special Amiibo skins: Use codes (WD-001, MK-002, D3-003, BW-004, IC-005)
 
 Changelog
+Version 2.6 - Glob Defenders Collab
+Link your Glob Defenders account to unlock the Glob jelly skins:
+
+Glob (link Star Jump to GlD) and GlobStar (link both ways)
+
+Possesed GlobStar (5400m, linked) and Angel GlobStar (5700m, linked)
+
+Glob skins crouch by contracting like jelly
+
+Charging the super jump now blinks the character faster with cycling colors as it fills
+
 Version 1.0 - Initial Release
 Core Gameplay:
 
