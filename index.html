@@ -1089,6 +1089,20 @@
                             <div class="locked-overlay">🔒</div>
                         </div>
 
+                        <!-- GLOBSTAR por metros: requieren cuenta de Glob Defenders vinculada -->
+                        <div class="skin-card locked" data-skin="possesed_globstar" data-meters="5400" data-requires="gld">
+                            <div class="skin-image"><img src="assets/Especiales (SJ)/PGlobStarDefault.png" class="skin-preview-img" alt="Possesed GlobStar"></div>
+                            <div class="skin-name" data-en="Possesed GlobStar" data-es="GlobStar Possesed">Possesed GlobStar</div>
+                            <div class="skin-price" data-en="5400m · GlD linked" data-es="5400m · GlD vinculado">5400m · GlD linked</div>
+                            <div class="locked-overlay">🔒</div>
+                        </div>
+                        <div class="skin-card locked" data-skin="angel_globstar" data-meters="5700" data-requires="gld">
+                            <div class="skin-image"><img src="assets/Especiales (SJ)/AGlobStarDefault.png" class="skin-preview-img" alt="Angel GlobStar"></div>
+                            <div class="skin-name" data-en="Angel GlobStar" data-es="GlobStar Ángel">Angel GlobStar</div>
+                            <div class="skin-price" data-en="5700m · GlD linked" data-es="5700m · GlD vinculado">5700m · GlD linked</div>
+                            <div class="locked-overlay">🔒</div>
+                        </div>
+
                         <!-- RAINBOW SKINS (después de 5200m, +850 cada una) -->
                         <div class="skin-card locked" data-skin="powered_rainbow" data-meters="6050">
                             <div class="skin-image"><img src="assets/OG-StarDefault.png" class="skin-preview-img" style="filter: hue-rotate(0deg) saturate(1.5) brightness(1.2)" alt="Powered Rainbow"></div>
@@ -1162,6 +1176,21 @@
                             <div class="skin-name" data-en="Ink" data-es="Tinta">Ink</div>
                             <div class="skin-amiibo" data-en="Amiibo?" data-es="¿Amiibo?">Amiibo?</div>
                             <div class="skin-description" data-en="The ultimate skin, for something he's the hero of this game... Right?" data-es="La skin definitiva, para algo es el héroe de este juego... ¿No?"></div>
+                            <div class="locked-overlay">🔒</div>
+                        </div>
+                        <!-- Colaboración Glob Defenders -->
+                        <div class="skin-card locked" data-skin="gld_link" data-code="GLD">
+                            <div class="skin-image"><img src="assets/Especiales (SJ)/GlobDefault.png" class="skin-preview-img" alt="Glob Skin"></div>
+                            <div class="skin-name" data-en="Glob" data-es="Glob">Glob</div>
+                            <div class="skin-amiibo" data-en="GlD Link" data-es="Vínculo GlD">GlD Link</div>
+                            <div class="skin-description" data-en="Link your Glob Defenders account by typing your GlD username in the code box" data-es="Vincula tu cuenta de Glob Defenders escribiendo tu usuario de GlD en la casilla de códigos"></div>
+                            <div class="locked-overlay">🔒</div>
+                        </div>
+                        <div class="skin-card locked" data-skin="globstar" data-code="GLD-BOTH">
+                            <div class="skin-image"><img src="assets/Especiales (SJ)/GlobStarDefault.png" class="skin-preview-img" alt="GlobStar Skin"></div>
+                            <div class="skin-name" data-en="GlobStar" data-es="GlobStar">GlobStar</div>
+                            <div class="skin-amiibo" data-en="Double Link" data-es="Doble Vínculo">Double Link</div>
+                            <div class="skin-description" data-en="After linking here, sign in to Glob Defenders with the same account so it links back to Star Jump" data-es="Tras vincular aquí, inicia sesión en Glob Defenders con la misma cuenta para que se vincule también con Star Jump"></div>
                             <div class="locked-overlay">🔒</div>
                         </div>
                         <div class="skin-card locked" data-skin="tristar" data-code="PatchedBug">
@@ -1273,6 +1302,27 @@
         </div>
     </div>
 
+    <!-- Vinculación con Glob Defenders: pide la contraseña sin mostrarla -->
+    <div id="gldLinkModal" role="dialog" aria-modal="true" aria-labelledby="gldLinkTitle"
+         style="display:none; position:fixed; inset:0; z-index:10000; background:rgba(0,0,20,0.75); align-items:center; justify-content:center;">
+        <div style="background:linear-gradient(135deg,#1a1a40,#0d0d26); border:2px solid #39ff14; border-radius:16px; padding:24px; width:min(90vw,360px); color:#fff; text-align:center; box-shadow:0 0 25px rgba(57,255,20,0.4);">
+            <h2 id="gldLinkTitle" data-en="Link Glob Defenders" data-es="Vincular Glob Defenders" style="margin-bottom:10px;">Link Glob Defenders</h2>
+            <p data-en="Account:" data-es="Cuenta:" style="margin-bottom:4px;">Account:</p>
+            <p id="gldLinkUser" style="font-weight:bold; color:#39ff14; margin-bottom:12px;"></p>
+            <label for="gldLinkPassword" data-en="Password" data-es="Contraseña" style="display:block; margin-bottom:6px;">Password</label>
+            <input type="password" id="gldLinkPassword" autocomplete="current-password" maxlength="128"
+                   style="width:100%; padding:10px; border-radius:8px; border:1px solid #39ff14; background:#000; color:#fff; font-size:16px; user-select:text;">
+            <p data-en="Your password is only sent to Glob Defenders and is not saved." data-es="Tu contraseña solo se envía a Glob Defenders y no se guarda." style="font-size:12px; opacity:0.8; margin:8px 0;">Your password is only sent to Glob Defenders and is not saved.</p>
+            <p id="gldLinkStatus" role="status" aria-live="polite" style="min-height:20px; color:#ffd166; margin-bottom:10px;"></p>
+            <div style="display:flex; gap:10px; justify-content:center;">
+                <button id="gldLinkConfirm" data-en="LINK" data-es="VINCULAR">LINK</button>
+                <button id="gldLinkCancel" data-en="CANCEL" data-es="CANCELAR">CANCEL</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2"></script>
+    <script src="gld-supabase-config.js"></script>
     <script>
         // Detectar si es un dispositivo táctil
         const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
@@ -1433,8 +1483,16 @@
             VStarDefault: new Image(), VStarS: new Image(), VStarG: new Image(),
             DStarDefault: new Image(), DStarS: new Image(), DStarG: new Image(),
             AStarDefault: new Image(), AStarS: new Image(), AStarG: new Image(),
-            Tristar: new Image()
+            Tristar: new Image(),
+            // Colaboración Glob Defenders
+            GlobDefault: new Image(), GlobG: new Image(), GlobS: new Image(),
+            GlobStarDefault: new Image(), GlobStarG: new Image(), GlobStarS: new Image(),
+            PGlobStarDefault: new Image(), PGlobStarG: new Image(), PGlobStarS: new Image(),
+            AGlobStarDefault: new Image(), AGlobStarG: new Image(), AGlobStarS: new Image()
         };
+        ['Glob', 'GlobStar', 'PGlobStar', 'AGlobStar'].forEach(n => {
+            ['Default', 'G', 'S'].forEach(p => { images[n + p].src = `assets/Especiales (SJ)/${n}${p}.png`; });
+        });
 
         images.starDefault.src = "assets/StarDefault.png";
         images.starCrouch.src = "assets/StarG.png";
@@ -1521,7 +1579,12 @@
             'galaxia': { type: 'colored', images: { default: 'starDefault', crouch: 'starCrouch', jump: 'starJump' }, filter: 'hue-rotate(140deg) brightness(0.8) saturate(1.2)', code: 'MK-002' },
             'rey': { type: 'colored', images: { default: 'starDefault', crouch: 'starCrouch', jump: 'starJump' }, filter: 'hue-rotate(-50deg) saturate(1.7)', code: 'D3-003' },
             'pinchos': { type: 'colored', images: { default: 'starDefault', crouch: 'starCrouch', jump: 'starJump' }, filter: 'hue-rotate(-25deg) brightness(0.9) saturate(1.4)', code: 'BW-004' },
-            'tinta': { type: 'colored', images: { default: 'starDefault', crouch: 'starCrouch', jump: 'starJump' }, filter: 'rainbow', code: 'IC-005' }
+            'tinta': { type: 'colored', images: { default: 'starDefault', crouch: 'starCrouch', jump: 'starJump' }, filter: 'rainbow', code: 'IC-005' },
+            // Colaboración Glob Defenders: se desbloquea al vincular la cuenta de GlD
+            'gld_link': { type: 'animated', images: { default: 'GlobDefault', crouch: 'GlobG', jump: 'GlobS' }, filter: 'none', code: 'GLD' },
+            'globstar': { type: 'animated', images: { default: 'GlobStarDefault', crouch: 'GlobStarG', jump: 'GlobStarS' }, filter: 'none', code: 'GLD-BOTH' },
+            'possesed_globstar': { type: 'animated', images: { default: 'PGlobStarDefault', crouch: 'PGlobStarG', jump: 'PGlobStarS' }, filter: 'none', meters: 5400, requires: 'gld' },
+            'angel_globstar': { type: 'animated', images: { default: 'AGlobStarDefault', crouch: 'AGlobStarG', jump: 'AGlobStarS' }, filter: 'none', meters: 5700, requires: 'gld' }
         };
 
         function getSkinImage(skinId, state) {
@@ -1541,7 +1604,8 @@
         };
 
         let rainbowTime = 0;
-        
+        let chargeBlinkPhase = 0; // fase del parpadeo al cargar supersalto
+
         function getRainbowFilter() {
             rainbowTime = (rainbowTime + 2) % 360;
             return `hue-rotate(${rainbowTime}deg) saturate(1.5) brightness(1.2)`;
@@ -1744,10 +1808,243 @@
                         alert(currentLanguage === 'en' ? 'You already have this skin.' : 'Ya tienes esta skin.');
                     }
                 }
+            } else if (code === 'GLD-UNLINK' || code === 'GLD-DESVINCULAR') {
+                codeInput.value = '';
+                unlinkGlobDefenders();
+                return;
+            } else if (GLD_USERNAME_PATTERN.test(codeInput.value.trim())) {
+                // No es un código: puede ser un usuario de Glob Defenders
+                const gldUser = codeInput.value.trim();
+                codeInput.value = '';
+                askLinkGlobDefenders(gldUser);
+                return;
             } else {
                 alert(currentLanguage === 'en' ? 'Invalid code.' : 'Código inválido.');
             }
             codeInput.value = '';
+        }
+
+        // ===== Colaboración Glob Defenders x Star Jump =====
+        const GLD_USERNAME_PATTERN = /^[A-Za-z0-9_.-]{3,24}$/;
+        const GLD_REWARD_SKIN = 'gld_link';
+        let gldLink = null; // { username, linkedAt, bestMeters }
+        let gldClient = null;
+
+        function gldText(en, es) { return currentLanguage === 'en' ? en : es; }
+
+        function getGldClient() {
+            if (gldClient) return gldClient;
+            const cfg = window.GLD_SUPABASE;
+            if (!window.supabase || !cfg || !cfg.url || !cfg.publishableKey) return null;
+            // La sesión de GlD se guarda en este navegador (clave propia de Star Jump)
+            // para poder sincronizar el progreso en la nube sin pedir la contraseña cada vez.
+            // Nunca se guarda la contraseña, solo el token de sesión que da Supabase.
+            gldClient = window.supabase.createClient(cfg.url, cfg.publishableKey, {
+                auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false, storageKey: 'starJumpGldAuth' }
+            });
+            return gldClient;
+        }
+
+        // ----- Guardado en la nube (tabla star_jump_progress de GlD) -----
+        const GLD_CLOUD_SAVE_DELAY = 4000;
+        let gldCloudTimer = null;
+        let gldCloudUserId = null; // id de la cuenta GlD con sesión activa
+
+        function getCloudSnapshot() {
+            return {
+                version: 1,
+                highScore: Math.floor(highScore || 0),
+                totalMeters: Math.floor(totalMeters || 0),
+                maxMetersReached: Math.floor(maxMetersReached || 0),
+                unlockedSkins: [...new Set(unlockedSkins)].filter(s => skinConfig[s]),
+                currentSkin
+            };
+        }
+
+        // Une progreso local y de la nube sin perder nada: máximo de metros y unión de skins
+        function mergeCloudProgress(cloud) {
+            if (!cloud || typeof cloud !== 'object') return false;
+            const num = v => (Number.isFinite(v) && v >= 0 ? Math.floor(v) : 0);
+            const before = JSON.stringify(getCloudSnapshot());
+            highScore = Math.max(highScore || 0, num(cloud.highScore));
+            totalMeters = Math.max(totalMeters || 0, num(cloud.totalMeters));
+            maxMetersReached = Math.max(maxMetersReached || 0, num(cloud.maxMetersReached), highScore, totalMeters);
+            if (Array.isArray(cloud.unlockedSkins)) {
+                cloud.unlockedSkins.forEach(s => {
+                    if (typeof s === 'string' && skinConfig[s] && !unlockedSkins.includes(s)) { unlockedSkins.push(s); unlockSkin(s); }
+                });
+            }
+            if (currentSkin === 'default' && typeof cloud.currentSkin === 'string' && unlockedSkins.includes(cloud.currentSkin)) {
+                selectSkin(cloud.currentSkin);
+            }
+            unlockSkinsUpToMeters(maxMetersReached);
+            updateProgressBar();
+            return before !== JSON.stringify(getCloudSnapshot());
+        }
+
+        async function pushCloudProgress() {
+            const client = getGldClient();
+            if (!client || !gldCloudUserId) return;
+            const { error } = await client.from('star_jump_progress').upsert({
+                user_id: gldCloudUserId, progress: getCloudSnapshot(), updated_at: new Date().toISOString()
+            });
+            if (error) console.warn('No se pudo guardar el progreso de Star Jump en la nube:', error.message);
+        }
+
+        function scheduleCloudSave() {
+            if (!gldCloudUserId) return;
+            clearTimeout(gldCloudTimer);
+            gldCloudTimer = setTimeout(pushCloudProgress, GLD_CLOUD_SAVE_DELAY);
+        }
+
+        // Descarga el progreso de la nube, lo une con el local y sube el resultado
+        async function syncCloudProgress() {
+            const client = getGldClient();
+            if (!client || !gldCloudUserId) return false;
+            const { data, error } = await client.from('star_jump_progress')
+                .select('progress').eq('user_id', gldCloudUserId).maybeSingle();
+            if (error) { console.warn('No se pudo leer el progreso de Star Jump en la nube:', error.message); return false; }
+            const changed = mergeCloudProgress(data && data.progress);
+            saveGameData();
+            await pushCloudProgress();
+            return changed;
+        }
+
+        // Al abrir el juego: si hay sesión de GlD guardada, sincroniza en segundo plano
+        async function restoreGldSession() {
+            if (!gldLink) return;
+            const client = getGldClient();
+            if (!client) return;
+            try {
+                const { data } = await client.auth.getSession();
+                const user = data && data.session && data.session.user;
+                if (!user) return;
+                gldCloudUserId = user.id;
+                await syncCloudProgress();
+            } catch (e) {
+                console.warn('No se pudo restaurar la sesión de Glob Defenders:', e);
+            }
+        }
+
+        async function unlinkGlobDefenders() {
+            if (!gldLink) { alert(gldText('This Star Jump is not linked to any GlD account.', 'Este Star Jump no está vinculado a ninguna cuenta de GlD.')); return; }
+            if (!confirm(gldText(
+                `Unlink ${gldLink.username}? Your progress stays on this device and in the cloud.`,
+                `¿Desvincular ${gldLink.username}? Tu progreso se queda en este dispositivo y en la nube.`))) return;
+            await pushCloudProgress().catch(() => {});
+            const client = getGldClient();
+            if (client) { try { await client.auth.signOut({ scope: 'local' }); } catch (_) {} }
+            gldLink = null; gldCloudUserId = null; clearTimeout(gldCloudTimer);
+            saveGameData();
+            alert(gldText('Glob Defenders account unlinked.', 'Cuenta de Glob Defenders desvinculada.'));
+        }
+
+        function askLinkGlobDefenders(username) {
+            if (gldLink && gldLink.username.toLowerCase() === username.toLowerCase()) {
+                if (!confirm(gldText(
+                    `This Star Jump is already linked to ${gldLink.username}. Sign in again to sync your progress?`,
+                    `Este Star Jump ya está vinculado a ${gldLink.username}. ¿Quieres volver a iniciar sesión para sincronizar tu progreso?`))) return;
+            } else if (gldLink && !confirm(gldText(
+                `This Star Jump is linked to ${gldLink.username}. Switch to "${username}"?`,
+                `Este Star Jump está vinculado a ${gldLink.username}. ¿Cambiar a "${username}"?`))) {
+                return;
+            } else if (!gldLink && !confirm(gldText(
+                `Do you want to link your Glob Defenders account "${username}" to Star Jump?\n\nYou'll get rewards in both games.`,
+                `¿Quieres vincular tu cuenta de Glob Defenders "${username}" a Star Jump?\n\nObtendrás recompensas en los dos juegos.`))) return;
+            openGldModal(username);
+        }
+
+        function openGldModal(username) {
+            const modal = document.getElementById('gldLinkModal');
+            document.getElementById('gldLinkUser').textContent = username;
+            document.getElementById('gldLinkPassword').value = '';
+            document.getElementById('gldLinkStatus').textContent = '';
+            document.getElementById('gldLinkConfirm').disabled = false;
+            modal.dataset.username = username;
+            modal.querySelectorAll('[data-en]').forEach(el => { el.textContent = el.getAttribute(`data-${currentLanguage}`); });
+            document.getElementById('gldLinkPassword').placeholder = gldText('GlD password', 'Contraseña de GlD');
+            modal.style.display = 'flex';
+            document.getElementById('gldLinkPassword').focus();
+        }
+
+        function closeGldModal() {
+            const modal = document.getElementById('gldLinkModal');
+            modal.style.display = 'none';
+            document.getElementById('gldLinkPassword').value = '';
+        }
+
+        async function confirmGldLink() {
+            const modal = document.getElementById('gldLinkModal');
+            const username = modal.dataset.username || '';
+            const passwordInput = document.getElementById('gldLinkPassword');
+            const status = document.getElementById('gldLinkStatus');
+            const button = document.getElementById('gldLinkConfirm');
+            const password = passwordInput.value;
+            if (!password) { status.textContent = gldText('Enter your password.', 'Escribe tu contraseña.'); return; }
+
+            const client = getGldClient();
+            if (!client) {
+                status.textContent = gldText('Could not connect to Glob Defenders. Check your internet connection.',
+                                             'No se pudo conectar con Glob Defenders. Comprueba tu conexión a internet.');
+                return;
+            }
+
+            button.disabled = true;
+            status.textContent = gldText('Linking...', 'Vinculando...');
+            try {
+                // Mismo formato de cuenta que usa Glob Defenders
+                const email = `${username.toLowerCase()}@accounts.glob-defenders.invalid`;
+                const { data: login, error: loginError } = await client.auth.signInWithPassword({ email, password });
+                passwordInput.value = '';
+                if (loginError || !login || !login.user) {
+                    status.textContent = gldText('Wrong username or password.', 'Usuario o contraseña incorrectos.');
+                    button.disabled = false;
+                    return;
+                }
+
+                const best = Math.floor(Math.max(maxMetersReached || 0, highScore || 0));
+                const { data, error } = await client.rpc('link_star_jump_account', { sj_best_meters: best });
+                if (error || !data || (data.result !== 'linked' && data.result !== 'updated')) {
+                    throw error || new Error('Respuesta inesperada al vincular');
+                }
+
+                gldLink = { username, linkedAt: data.linkedAt, bestMeters: data.bestMeters };
+                gldCloudUserId = login.user.id;
+                const isNewSkin = !unlockedSkins.includes(GLD_REWARD_SKIN);
+                if (isNewSkin) { unlockedSkins.push(GLD_REWARD_SKIN); unlockSkin(GLD_REWARD_SKIN); }
+                status.textContent = gldText('Syncing your progress...', 'Sincronizando tu progreso...');
+                const cloudChanged = await syncCloudProgress();
+                updateProgressBar();
+                saveGameData();
+                closeGldModal();
+                alert(gldText(
+                    `Account linked with ${username}!` + (isNewSkin ? `\n\nStar Jump: you unlocked ${getSkinName(GLD_REWARD_SKIN)}.` : '') +
+                    (cloudChanged ? `\nYour cloud progress was restored.` : '') +
+                    `\nYour meters and skins are now saved in your GlD account.` +
+                    `\nGlob Defenders: sign in to get the Star Leap badge.`,
+                    `¡Cuenta vinculada con ${username}!` + (isNewSkin ? `\n\nStar Jump: has desbloqueado ${getSkinName(GLD_REWARD_SKIN)}.` : '') +
+                    (cloudChanged ? `\nSe ha recuperado tu progreso de la nube.` : '') +
+                    `\nTus metros y skins se guardan ahora en tu cuenta de GlD.` +
+                    `\nGlob Defenders: inicia sesión para recibir el emblema Salto Estelar.`));
+            } catch (e) {
+                console.error('Error al vincular con Glob Defenders:', e);
+                status.textContent = gldText('The account could not be linked right now. Try again later.',
+                                             'No se pudo vincular la cuenta ahora mismo. Inténtalo más tarde.');
+                button.disabled = false;
+                // Si la vinculación falla, no dejar una sesión a medias
+                if (!gldCloudUserId) { try { await client.auth.signOut({ scope: 'local' }); } catch (_) {} }
+            }
+        }
+
+        function setupGldLink() {
+            document.getElementById('gldLinkConfirm').addEventListener('click', confirmGldLink);
+            document.getElementById('gldLinkCancel').addEventListener('click', closeGldModal);
+            document.getElementById('gldLinkPassword').addEventListener('keydown', (e) => {
+                e.stopPropagation(); // que las teclas no muevan a la estrella
+                if (e.key === 'Enter') confirmGldLink();
+                if (e.key === 'Escape') closeGldModal();
+            });
+            document.getElementById('gldLinkPassword').addEventListener('keyup', (e) => e.stopPropagation());
         }
         
         function getSkinName(skinId) {
@@ -1759,7 +2056,8 @@
             const card = document.querySelector(`.skin-card[data-skin="${skinId}"]`);
             if (card) {
                 card.classList.remove('locked');
-                card.querySelector('.locked-overlay').style.display = 'none';
+                const overlay = card.querySelector('.locked-overlay');
+                if (overlay) overlay.style.display = 'none';
                 if (unlockedSkins.length === 2) selectSkin(skinId);
             }
         }
@@ -1779,7 +2077,7 @@
             const skinCards = document.querySelectorAll('.skin-card[data-meters]');
             let unlocked = false;
             skinCards.forEach(card => {
-                if (card.classList.contains('locked')) {
+                if (card.classList.contains('locked') && cardRequirementMet(card)) {
                     const req = parseInt(card.getAttribute('data-meters'));
                     if (maxMetersReached >= req) {
                         const skinId = card.getAttribute('data-skin');
@@ -1919,7 +2217,26 @@
                     if (currentSkin === 'tinta' || currentSkin === 'powered_rainbow' || currentSkin === 'virtual_rainbow' || 
                         currentSkin === 'rainbow_matter' || currentSkin === 'angelical_shiny') filter = getRainbowFilter();
                     else if (filter === 'rainbow') filter = getRainbowFilter();
+
+                    // Parpadeo de carga de supersalto: al agacharse cargando, el
+                    // personaje parpadea; cuanto mas cargado, mas rapido y mas colorido.
+                    let chargeAlpha = 1;
+                    if (player.isCrouching && player.jumpCharge > 0) {
+                        const ratio = Math.min(1, player.jumpCharge / player.maxJumpCharge);
+                        chargeBlinkPhase += 0.12 + ratio * 0.9; // velocidad crece con la carga
+                        // parpadea entre opacidad alta y baja (mas marcado al cargar mas)
+                        const blink = (Math.sin(chargeBlinkPhase) + 1) / 2; // 0..1
+                        chargeAlpha = 1 - (0.15 + ratio * 0.55) * blink;
+                        // tono de color que cicla cada vez mas rapido con la carga
+                        const hue = (chargeBlinkPhase * (40 + ratio * 140)) % 360;
+                        const sat = 1 + ratio * 1.8;
+                        const bri = 1 + ratio * 0.6 * blink;
+                        const colorFilter = `hue-rotate(${hue.toFixed(0)}deg) saturate(${sat.toFixed(2)}) brightness(${bri.toFixed(2)})`;
+                        filter = (filter && filter !== 'none') ? `${filter} ${colorFilter}` : colorFilter;
+                    }
+
                     ctx.save();
+                    ctx.globalAlpha = chargeAlpha;
                     if (filter && filter !== 'none') ctx.filter = filter;
                     const iw = img.naturalWidth || img.width;
                     const ih = img.naturalHeight || img.height;
@@ -1987,8 +2304,9 @@
         }
 
         function saveGameData() {
-            const data = { highScore, totalMeters, maxMetersReached, unlockedSkins, currentSkin, currentLanguage };
+            const data = { highScore, totalMeters, maxMetersReached, unlockedSkins, currentSkin, currentLanguage, gldLink };
             try { localStorage.setItem('starJumpSave', JSON.stringify(data)); } catch(e) { console.error(e); }
+            scheduleCloudSave(); // si hay cuenta de GlD vinculada, también a la nube
         }
 
         function loadGameData() {
@@ -2002,6 +2320,7 @@
                     unlockedSkins = data.unlockedSkins || ['default'];
                     currentSkin = data.currentSkin || 'default';
                     currentLanguage = data.currentLanguage || 'en';
+                    gldLink = data.gldLink && typeof data.gldLink.username === 'string' ? data.gldLink : null;
                     unlockedSkins.forEach(s => unlockSkin(s));
                     selectSkin(currentSkin);
                     updateProgressBar();
@@ -2011,11 +2330,16 @@
             } catch(e) { resetGameData(); }
         }
 
+        // Skins por metros que además piden cuenta de Glob Defenders vinculada
+        function cardRequirementMet(card) {
+            return card.getAttribute('data-requires') !== 'gld' || Boolean(gldLink);
+        }
+
         function unlockSkinsUpToMeters(meters) {
             const cards = document.querySelectorAll('.skin-card[data-meters]');
             let unlocked = false;
             cards.forEach(card => {
-                if (card.classList.contains('locked')) {
+                if (card.classList.contains('locked') && cardRequirementMet(card)) {
                     const req = parseInt(card.getAttribute('data-meters'));
                     if (meters >= req) {
                         const id = card.getAttribute('data-skin');
@@ -2028,6 +2352,12 @@
 
         function resetGameData() {
             highScore = 0; totalMeters = 0; maxMetersReached = 0; unlockedSkins = ['default']; currentSkin = 'default';
+            // Resetear desvincula en este dispositivo (sin tocar el progreso guardado en la nube)
+            if (gldLink || gldCloudUserId) {
+                gldLink = null; gldCloudUserId = null; clearTimeout(gldCloudTimer);
+                const client = getGldClient();
+                if (client) client.auth.signOut({ scope: 'local' }).catch(() => {});
+            }
             document.querySelectorAll('.skin-card').forEach(card => {
                 if (card.getAttribute('data-skin') !== 'default') {
                     card.classList.add('locked');
@@ -2036,7 +2366,8 @@
                 } else {
                     card.classList.add('active');
                     card.classList.remove('locked');
-                    card.querySelector('.locked-overlay').style.display = 'none';
+                    const overlay = card.querySelector('.locked-overlay');
+                    if (overlay) overlay.style.display = 'none';
                 }
             });
             selectSkin('default');
@@ -2082,7 +2413,8 @@
                 'astral','astral_azul','astral_rojo','astral_invertido',
                 'squid_rojo','squid_azul','squid_verde','squid_invertido',
                 'powered_rainbow','virtual_rainbow','rainbow_matter','angelical_shiny',
-                'leal','galaxia','rey','pinchos','tinta','tristar','pink_virtude'
+                'leal','galaxia','rey','pinchos','tinta','tristar','pink_virtude',
+                'gld_link','globstar','possesed_globstar','angel_globstar'
             ];
             all.forEach(s => { if (!unlockedSkins.includes(s)) { unlockedSkins.push(s); unlockSkin(s); } });
             totalMeters = 10000;
@@ -2122,6 +2454,7 @@
             setupMenuNavigation();
             setupSkinSelection();
             setupCodeSystem();
+            setupGldLink();
             setupTouchControls();
             setupKeyboardControls();
             updateSkinPreview();
@@ -2133,7 +2466,12 @@
             difficultyIndicator.style.display = 'none';
             loadGameData();
             changeLanguage();
+            restoreGldSession();
             window.addEventListener('beforeunload', saveGameData);
+            // Al cambiar de pestaña o cerrar en móvil, sube ya el progreso pendiente
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'hidden' && gldCloudUserId) { clearTimeout(gldCloudTimer); pushCloudProgress(); }
+            });
             setInterval(() => { if (gameRunning) saveGameData(); }, 30000);
         });
     </script>

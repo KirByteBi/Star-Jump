@@ -1,0 +1,18 @@
+# Dependencias (sharp, usado solo para generar imágenes localmente)
+node_modules/
+package.json
+package-lock.json
+
+# Backup temporal de los Globs en 1080 (no hace falta versionarlo)
+assets/Especiales (SJ)/_backup_1080/
+
+# Contenido previo guardado (no se publica)
+GUARDADOS/
+
+# Música (no se versiona por peso/licencia)
+themes/
+
+# Archivos temporales de trabajo
+_*.js
+_*.log
+_*.bat

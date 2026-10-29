@@ -32,7 +32,7 @@ Basic colors: 100m - 400m
 
 Premium skins: 450m - 2025m
 
-Special Amiibo skins: Use codes related to amiibos, for example WD-001
+Special Amiibo skins: Use codes (WD-001, MK-002, D3-003, BW-004, IC-005)
 
 Changelog
 Version 1.0 - Initial Release
@@ -130,66 +130,37 @@ Demonic: 1950m
 
 Squid: 2025m
 
-Powered + Colors: Between 2200 and 2800. Power? Who said a Star can be that powerfull...
-
-Virtual + Colors: Between 3000 and 3600. Refencing Pyces.
-
-Possesed + Colors: On 3800 and 4400. And I must say reaching this darkness star must not be luck, you got choosen by him.
-
-Astral + Colors: On 4800 and 4850. You went to heaven bro, you must be dedicated to this.
-
-Squid Recolors: 4900 and 5200. Some recolors for the squid army.
-
-Rainbow V2 Pack: 6050 and 8600, must say you didn't touch grass for this... Those were exclusive from debug but realised that whould be unfair. 
-
 By Codes:
 
 Loyal: WD-001
 
-Galaxy: something about MK
+Galaxy: MK-002
 
-King: Three Ds are so kind
+King: D3-003
 
-Spikes: I guess it has something with a B and two Vs
+Spikes: BW-004
 
-Ink: Rainbow default Star huh? Maybe the name and a C could be usefull
+Ink: IC-005
 
-TriStar: Search the code here or in the logs, you decide!
+Glob Defenders Collab
+Link your accounts to unlock exclusive Glob skins in both games.
 
-Pink Virtude: Debug code, like a web or something.
+How to link:
+Type your Glob Defenders username in the code box. The game asks whether you want to link your GlD account; confirm with your GlD password (sent only to Glob Defenders, never saved). Use GLD-UNLINK to unlink.
+
+Star Jump rewards (Glob skins):
+
+Glob: link Star Jump to your Glob Defenders account
+
+GlobStar: link both ways — after linking here, sign in to Glob Defenders with the same account so it links back
+
+Possesed GlobStar: reach 5400m with a linked GlD account
+
+Angel GlobStar: reach 5700m with a linked GlD account
+
+The Glob skins are jelly blobs: while charging the super jump they crouch by contracting, and the character blinks faster with cycling colors the more the jump is charged.
+
+Glob Defenders reward: Star Leap badge on your next GlD login.
 
 License
-
-This project is for educational purposes. All Nintendo and Splatoon rights belong to their respective owners.
-
-=== UPDATE LOG 1 ===
-- 3 New skin types:
-    - Possesed
-    - Astral
-    - Power
-    - Virtual
-- New Code: PatchedBug (Gives TriStar, a new buggy Prototype based on the first bug when animating the image)
-- New recolors to their respective skins (Giving the cap of skin meters +3200)
-- Spaced a bit more the meter rewards to give more value to the gameplay.
-
-=== UPDATE LOG 1.5 ===
-- Added a progress save, aswell a reset button for antibug, oh and also check the INFO section! There might be the update log too.
-- Thanks to Pevo with the testing.
-
-=== UPDATE LOG 2.5.1 ===
-- New skins begin Power, Virtual, Possesed and Astral
-- New skins begin Rainbow version of new skins of this update
-- A secret debug code?? Yeah this may be helpfull once you figure how to get 'em.
-
-Remember to use PatchedBug ;)
-It's on the game logs too so you don't miss this code or the updates.
-
-[CREDITS]
-- KirByteBi as the owner, made the game, the arts for Astral, Possesed, Power and Virtual skins, also the Squid skin is made by him. Platforms also were made by this little fella.
-- MikaNBC for Star draws, and logo + banner!
-- Pevo for the testing, I enjoy getting this friends tho.
-- And all the guys playing this game! It helps me alot, Kirb whould be prown of you.
-
-
-=== UPDATE LOG 1.5-5 ===
-- Changed title name, the "subtitle" is now "Return to Space"
+This project is for educational purposes, under the same terms as Glob Defenders. All Nintendo and Splatoon rights belong to their respective owners.
