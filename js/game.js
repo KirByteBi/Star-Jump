@@ -13,6 +13,7 @@
         const hud = document.getElementById('hud');
         const finalScore = document.getElementById('finalScore');
         const difficultyIndicator = document.getElementById('difficulty');
+        const demoOverlay = document.getElementById('demoOverlay');
         const touchControls = document.getElementById('touchControls');
         const crouchButton = document.getElementById('crouchButton');
         const touchIndicator = document.getElementById('touchIndicator');
@@ -48,6 +49,12 @@
         let gameRunning = false;
         let lastTime = 0;
         let imagesLoaded = false;
+        // ----- Demo / attract mode -----
+        let demoMode = false;            // true mientras la demo se juega sola
+        let demoIdleTimer = null;        // temporizador de inactividad en el menú
+        let demoTargetMeters = 0;        // metros a los que el bot se deja morir
+        let prevSkinBeforeDemo = null;   // skin a restaurar al salir de la demo
+        const DEMO_IDLE_MS = 15000;      // 15 s de inactividad en el menú -> demo
         let currentLanguage = 'en';
         let currentSkin = 'default';
         let unlockedSkins = ['default'];
@@ -860,8 +867,11 @@
             platforms = platforms.filter(p => p.y - cameraY < canvas.height + 100);
             score = Math.max(0, Math.floor(-cameraY / 10));
             hud.textContent = score + " m";
-            checkSkinUnlocks();
-            if (!godMode && player.y + player.height/2 > cosmicDustY) { totalMeters += score; gameOver(); }
+            if (!demoMode) checkSkinUnlocks(); // la demo no desbloquea nada
+            if (!godMode && player.y + player.height/2 > cosmicDustY) {
+                if (!demoMode) totalMeters += score; // la demo no suma metros
+                gameOver();
+            }
             else if (godMode && player.y + player.height/2 > cosmicDustY) cosmicDustY = player.y - player.height;
         }
 
@@ -948,6 +958,11 @@
 
         function gameOver() {
             gameRunning = false;
+            // En demo no se guarda progreso ni se muestra game over: reinicia la demo.
+            if (demoMode) {
+                setTimeout(() => { if (demoMode) startDemo(); }, 1200);
+                return;
+            }
             finalScore.textContent = score + " m";
             gameOverScreen.classList.remove('hidden');
             updateProgressBar();
@@ -957,16 +972,123 @@
             touchIndicator.style.display = 'none';
         }
 
+        // ===== DEMO / ATTRACT MODE =====
+        // El bot decide el movimiento y el salto cada frame. Busca la plataforma
+        // alcanzable mas cercana por encima, se alinea y salta cargando segun la
+        // distancia. Al pasar demoTargetMeters se "rinde" y se deja morir.
+        function demoBotThink() {
+            if (!demoMode || !gameRunning) return;
+
+            // Rendirse a los metros objetivo: deja de moverse y no salta mas.
+            if (score >= demoTargetMeters) {
+                keys = {};
+                if (!player.isCrouching) player.vx = 0;
+                return;
+            }
+
+            // Elegir plataforma objetivo: la mas baja que esté por encima del jugador
+            // (la siguiente a la que subir), dentro de un rango de salto razonable.
+            let target = null;
+            let bestY = -Infinity;
+            for (const p of platforms) {
+                if (p.y < player.y - 10) { // por encima
+                    if (p.y > bestY) { bestY = p.y; target = p; }
+                }
+            }
+            if (!target) { keys = {}; player.vx = 0; return; }
+
+            const dx = target.x - player.x;
+
+            if (player.isOnPlatform) {
+                // Alinear horizontalmente con el objetivo; cuando está cerca, cargar y saltar.
+                if (Math.abs(dx) > target.width * 0.35) {
+                    // moverse hacia el objetivo (no se puede mover agachado)
+                    if (player.isCrouching) stopCrouching();
+                    keys = {};
+                    if (dx < 0) keys['ArrowLeft'] = true; else keys['ArrowRight'] = true;
+                    updatePlayerMovement();
+                } else {
+                    // alineado: cargar salto. Cuanto mas lejos/alto, mas carga.
+                    keys = {};
+                    player.vx = 0;
+                    if (!player.isCrouching) startCrouching();
+                    const dyGap = player.y - target.y; // positivo = objetivo mas arriba
+                    const needed = Math.min(player.maxJumpCharge, 18 + dyGap * 0.35);
+                    if (player.jumpCharge >= needed) stopCrouching(); // soltar -> salta
+                }
+            } else {
+                // En el aire: dejar algo de deriva hacia el objetivo para corregir.
+                keys = {};
+                if (dx < -6) keys['ArrowLeft'] = true;
+                else if (dx > 6) keys['ArrowRight'] = true;
+                updatePlayerMovement();
+            }
+        }
+
+        function startDemo() {
+            cancelDemoTimer();
+            if (gameRunning) return;
+            demoMode = true;
+            demoTargetMeters = 300 + Math.floor(Math.random() * 300); // 300-600 m
+            prevSkinBeforeDemo = currentSkin;
+            currentSkin = 'default'; // la demo siempre usa la skin default
+            startScreen.classList.add('hidden');
+            gameOverScreen.classList.add('hidden');
+            difficultyIndicator.style.display = 'block';
+            demoOverlay.style.display = 'flex';
+            gameRunning = true;
+            lastTime = 0;
+            initGame();
+            // en demo no mostramos controles tactiles
+            touchControls.style.display = 'none';
+            crouchButton.style.display = 'none';
+            touchIndicator.style.display = 'none';
+            requestAnimationFrame(gameLoop);
+        }
+
+        function exitDemo() {
+            if (!demoMode) return;
+            demoMode = false;
+            gameRunning = false;
+            keys = {};
+            demoOverlay.style.display = 'none';
+            if (prevSkinBeforeDemo) { currentSkin = prevSkinBeforeDemo; prevSkinBeforeDemo = null; }
+            goToMenu();
+            scheduleDemo(); // reinicia el contador de inactividad
+        }
+
+        function scheduleDemo() {
+            cancelDemoTimer();
+            // Solo programa la demo si estamos en el menú (startScreen visible)
+            if (startScreen.classList.contains('hidden')) return;
+            demoIdleTimer = setTimeout(startDemo, DEMO_IDLE_MS);
+        }
+
+        function cancelDemoTimer() {
+            if (demoIdleTimer) { clearTimeout(demoIdleTimer); demoIdleTimer = null; }
+        }
+
+        // Cualquier interacción del usuario: si la demo está activa, volver al menú;
+        // si estamos en el menú, reiniciar el contador de inactividad.
+        function onUserActivity() {
+            if (demoMode) { exitDemo(); return; }
+            if (!gameRunning && !startScreen.classList.contains('hidden')) scheduleDemo();
+        }
+
         function gameLoop(ts) {
             if (!lastTime) lastTime = ts;
             const dt = (ts - lastTime) / 16;
             lastTime = ts;
+            if (demoMode) demoBotThink();
             update(dt);
             draw();
             if (gameRunning) requestAnimationFrame(gameLoop);
         }
 
         function startGame() {
+            cancelDemoTimer();       // partida normal: no lanzar demo
+            demoMode = false;
+            demoOverlay.style.display = 'none';
             gameRunning = true;
             lastTime = 0;
             initGame();
@@ -986,6 +1108,7 @@
             touchControls.style.display = 'none';
             crouchButton.style.display = 'none';
             touchIndicator.style.display = 'none';
+            scheduleDemo(); // de vuelta en el menú: reinicia el contador de inactividad
         }
 
         function saveGameData() {
@@ -1159,7 +1282,26 @@
             // Al cambiar de pestaña o cerrar en móvil, sube ya el progreso pendiente
             document.addEventListener('visibilitychange', () => {
                 if (document.visibilityState === 'hidden' && gldCloudUserId) { clearTimeout(gldCloudTimer); pushCloudProgress(); }
+                // Si la pestaña se oculta, no dejar una demo corriendo en segundo plano
+                if (document.visibilityState === 'hidden' && demoMode) exitDemo();
             });
             setInterval(() => { if (gameRunning) saveGameData(); }, 30000);
+
+            // ----- Demo / attract mode: actividad del usuario -----
+            // En captura, para interceptar antes que los botones del menú cuando hay demo.
+            ['pointerdown', 'keydown', 'touchstart'].forEach(ev => {
+                document.addEventListener(ev, (e) => {
+                    if (demoMode) {
+                        // salir de la demo y NO dejar que el evento active nada más
+                        e.preventDefault();
+                        e.stopPropagation();
+                        exitDemo();
+                    } else {
+                        onUserActivity();
+                    }
+                }, true);
+            });
+            // Arrancar el contador de inactividad al cargar (estamos en el menú)
+            scheduleDemo();
         });
     
