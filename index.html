@@ -54,7 +54,21 @@
             padding: 20px;
             overflow-y: auto;
         }
-        .hidden { display: none; }
+        .hidden { display: none !important; }
+        /* Una sección oculta nunca debe renderizarse ni ocupar espacio */
+        .menu-section.hidden { display: none !important; }
+
+        /* Entrada suave al cambiar de sección del menú (MENU/SKINS/INFO) */
+        .menu-section:not(.hidden) {
+            animation: sectionFadeIn 0.28s ease;
+        }
+        @keyframes sectionFadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .menu-section:not(.hidden) { animation: none; }
+        }
         
         .game-banner {
             width: clamp(250px, 60vw, 400px);
@@ -103,27 +117,50 @@
             color: #e0e0ff;
         }
         button { 
-            padding: 12px 25px; 
-            border: none; 
-            border-radius: 10px; 
+            position: relative;
+            padding: 13px 26px; 
+            border-radius: 12px; 
             background: linear-gradient(135deg, #ffd700, #ff6b00);
             color: #1a1a2e; 
             cursor: pointer; 
             font-weight: bold; 
             margin: 8px;
             font-size: clamp(0.9em, 3vw, 1.1em);
-            transition: all 0.3s;
+            letter-spacing: 0.4px;
+            transition: transform 0.18s ease, box-shadow 0.25s ease, background 0.25s ease, filter 0.2s ease;
             min-width: 200px;
             border: 2px solid rgba(255, 215, 0, 0.5);
             box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+            overflow: hidden;
+        }
+        /* Brillo que cruza el botón al pasar el ratón */
+        button::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -120%;
+            width: 60%; height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.45), transparent);
+            transform: skewX(-20deg);
+            transition: left 0.5s ease;
+            pointer-events: none;
         }
         button:hover {
             background: linear-gradient(135deg, #ffed4e, #ff8c42);
             transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
+            box-shadow: 0 8px 24px rgba(255, 215, 0, 0.55);
         }
+        button:hover::after { left: 130%; }
         button:active {
-            transform: translateY(-1px);
+            transform: translateY(-1px) scale(0.98);
+            box-shadow: 0 3px 10px rgba(255, 215, 0, 0.4);
+        }
+        /* Foco visible para navegación con teclado (accesibilidad) */
+        button:focus-visible,
+        .skin-card:focus-visible,
+        .nav-btn:focus-visible,
+        .code-input:focus-visible {
+            outline: 3px solid #ffffff;
+            outline-offset: 2px;
         }
         button:disabled {
             background: #666 !important;
@@ -131,6 +168,13 @@
             cursor: not-allowed;
             transform: none;
             box-shadow: none;
+            filter: grayscale(0.3);
+        }
+        button:disabled::after { display: none; }
+        /* Respetar a quien prefiere menos movimiento */
+        @media (prefers-reduced-motion: reduce) {
+            button, button::after { transition: none; }
+            button:hover { transform: none; }
         }
         #hud {
             position: absolute;
@@ -357,10 +401,10 @@
         }
         
         .skin-description {
-            font-size: 0.65em;
-            color: #ccccff;
-            margin-top: 5px;
-            line-height: 1.2;
+            font-size: 0.75em;
+            color: #d6d6ff;
+            margin-top: 6px;
+            line-height: 1.35;
             font-style: italic;
         }
         
@@ -1393,6 +1437,7 @@
         let currentLanguage = 'en';
         let currentSkin = 'default';
         let unlockedSkins = ['default'];
+        let hasPickedSkin = false; // true cuando el jugador elige una skin manualmente
         let highScore = 0;
         let totalMeters = 0;
         let maxMetersReached = 0;
@@ -1729,6 +1774,7 @@
                     skinCards.forEach(c => c.classList.remove('active'));
                     card.classList.add('active');
                     currentSkin = card.getAttribute('data-skin');
+                    hasPickedSkin = true; // el jugador ha elegido a propósito: no auto-equipar más
                     updateSkinPreview();
                     saveGameData();
                 });
@@ -1784,16 +1830,20 @@
                     if (meters < minMeters) { minMeters = meters; nextSkin = card; }
                 }
             });
+            // La barra usa maxMetersReached (el récord), la MISMA métrica con la que se
+            // desbloquean las skins en checkSkinUnlocks. Antes usaba totalMeters (acumulado
+            // de todas las partidas), por eso la barra se "atascaba" o no cuadraba.
+            const progressMeters = Math.max(maxMetersReached || 0, totalMeters || 0);
             if (nextSkin) {
                 const skinName = nextSkin.querySelector('.skin-name').textContent;
                 const reqMeters = parseInt(nextSkin.getAttribute('data-meters'));
-                currentMeters.textContent = totalMeters;
+                currentMeters.textContent = progressMeters;
                 nextUnlock.textContent = reqMeters;
                 nextSkinInfo.textContent = currentLanguage === 'en' ? `Next skin: ${skinName} - ${reqMeters}m` : `Próxima skin: ${skinName} - ${reqMeters}m`;
-                progressFill.style.width = `${Math.min((totalMeters / reqMeters) * 100, 100)}%`;
+                progressFill.style.width = `${Math.min((progressMeters / reqMeters) * 100, 100)}%`;
             } else {
-                currentMeters.textContent = totalMeters;
-                nextUnlock.textContent = totalMeters;
+                currentMeters.textContent = progressMeters;
+                nextUnlock.textContent = progressMeters;
                 nextSkinInfo.textContent = currentLanguage === 'en' ? 'All skins unlocked!' : '¡Todas las skins desbloqueadas!';
                 progressFill.style.width = '100%';
             }
@@ -2074,7 +2124,12 @@
                 card.classList.remove('locked');
                 const overlay = card.querySelector('.locked-overlay');
                 if (overlay) overlay.style.display = 'none';
-                if (unlockedSkins.length === 2) selectSkin(skinId);
+                // Auto-equipar una skin nueva solo si el jugador aún no ha elegido ninguna
+                // (sigue con la default). En cuanto elige una a propósito, no se le vuelve
+                // a cambiar sola. Funciona con cualquier skin.
+                if (!hasPickedSkin && currentSkin === 'default' && skinId !== 'default') {
+                    selectSkin(skinId);
+                }
             }
         }
         
@@ -2320,7 +2375,7 @@
         }
 
         function saveGameData() {
-            const data = { highScore, totalMeters, maxMetersReached, unlockedSkins, currentSkin, currentLanguage, gldLink };
+            const data = { highScore, totalMeters, maxMetersReached, unlockedSkins, currentSkin, currentLanguage, gldLink, hasPickedSkin };
             try { localStorage.setItem('starJumpSave', JSON.stringify(data)); } catch(e) { console.error(e); }
             scheduleCloudSave(); // si hay cuenta de GlD vinculada, también a la nube
         }
@@ -2337,6 +2392,9 @@
                     currentSkin = data.currentSkin || 'default';
                     currentLanguage = data.currentLanguage || 'en';
                     gldLink = data.gldLink && typeof data.gldLink.username === 'string' ? data.gldLink : null;
+                    // Si el guardado marca que ya eligió, o la skin guardada no es default,
+                    // consideramos que el jugador ya ha elegido: no auto-equipar al desbloquear.
+                    hasPickedSkin = data.hasPickedSkin === true || (currentSkin && currentSkin !== 'default');
                     unlockedSkins.forEach(s => unlockSkin(s));
                     selectSkin(currentSkin);
                     updateProgressBar();
@@ -2367,7 +2425,7 @@
         }
 
         function resetGameData() {
-            highScore = 0; totalMeters = 0; maxMetersReached = 0; unlockedSkins = ['default']; currentSkin = 'default';
+            highScore = 0; totalMeters = 0; maxMetersReached = 0; unlockedSkins = ['default']; currentSkin = 'default'; hasPickedSkin = false;
             // Resetear desvincula en este dispositivo (sin tocar el progreso guardado en la nube)
             if (gldLink || gldCloudUserId) {
                 gldLink = null; gldCloudUserId = null; clearTimeout(gldCloudTimer);
