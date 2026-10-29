@@ -193,3 +193,11 @@ It's on the game logs too so you don't miss this code or the updates.
 
 === UPDATE LOG 1.5-5 ===
 - Changed title name, the "subtitle" is now "Return to Space"
+
+=== UPDATE LOG 2.6 - Glob Defenders Collab ===
+- Link your Glob Defenders account: type your GlD username in the code box, confirm, and enter your GlD password (it is only sent to Glob Defenders and never saved).
+    - Star Jump reward: Glob Starry skin (provisional bright green Starry).
+    - Glob Defenders reward: Star Leap badge (500 PyCoins, 50 DuckPass, 300 XP) on your next GlD login.
+- Power, Virtual and Possesed skins rebuilt on top of Starry's poses: they no longer jump around or change size when crouching/jumping.
+- Possesed has a proper idle image now.
+- Fixed an error on the very first launch (default skin card).
