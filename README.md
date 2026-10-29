@@ -201,3 +201,5 @@ It's on the game logs too so you don't miss this code or the updates.
 - Power, Virtual and Possesed skins rebuilt on top of Starry's poses: they no longer jump around or change size when crouching/jumping.
 - Possesed has a proper idle image now.
 - Fixed an error on the very first launch (default skin card).
+- Cloud save: once linked, your meters and skins are saved in your Glob Defenders account and restored on any device where you link it (progress is merged, nothing is lost).
+- Type GLD-UNLINK in the code box to unlink this device.

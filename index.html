@@ -1775,6 +1775,10 @@
                         alert(currentLanguage === 'en' ? 'You already have this skin.' : 'Ya tienes esta skin.');
                     }
                 }
+            } else if (code === 'GLD-UNLINK' || code === 'GLD-DESVINCULAR') {
+                codeInput.value = '';
+                unlinkGlobDefenders();
+                return;
             } else if (GLD_USERNAME_PATTERN.test(codeInput.value.trim())) {
                 // No es un código: puede ser un usuario de Glob Defenders
                 const gldUser = codeInput.value.trim();
@@ -1799,19 +1803,119 @@
             if (gldClient) return gldClient;
             const cfg = window.GLD_SUPABASE;
             if (!window.supabase || !cfg || !cfg.url || !cfg.publishableKey) return null;
-            // Sesión solo en memoria: Star Jump no guarda la sesión de GlD
+            // La sesión de GlD se guarda en este navegador (clave propia de Star Jump)
+            // para poder sincronizar el progreso en la nube sin pedir la contraseña cada vez.
+            // Nunca se guarda la contraseña, solo el token de sesión que da Supabase.
             gldClient = window.supabase.createClient(cfg.url, cfg.publishableKey, {
-                auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
+                auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false, storageKey: 'starJumpGldAuth' }
             });
             return gldClient;
+        }
+
+        // ----- Guardado en la nube (tabla star_jump_progress de GlD) -----
+        const GLD_CLOUD_SAVE_DELAY = 4000;
+        let gldCloudTimer = null;
+        let gldCloudUserId = null; // id de la cuenta GlD con sesión activa
+
+        function getCloudSnapshot() {
+            return {
+                version: 1,
+                highScore: Math.floor(highScore || 0),
+                totalMeters: Math.floor(totalMeters || 0),
+                maxMetersReached: Math.floor(maxMetersReached || 0),
+                unlockedSkins: [...new Set(unlockedSkins)].filter(s => skinConfig[s]),
+                currentSkin
+            };
+        }
+
+        // Une progreso local y de la nube sin perder nada: máximo de metros y unión de skins
+        function mergeCloudProgress(cloud) {
+            if (!cloud || typeof cloud !== 'object') return false;
+            const num = v => (Number.isFinite(v) && v >= 0 ? Math.floor(v) : 0);
+            const before = JSON.stringify(getCloudSnapshot());
+            highScore = Math.max(highScore || 0, num(cloud.highScore));
+            totalMeters = Math.max(totalMeters || 0, num(cloud.totalMeters));
+            maxMetersReached = Math.max(maxMetersReached || 0, num(cloud.maxMetersReached), highScore, totalMeters);
+            if (Array.isArray(cloud.unlockedSkins)) {
+                cloud.unlockedSkins.forEach(s => {
+                    if (typeof s === 'string' && skinConfig[s] && !unlockedSkins.includes(s)) { unlockedSkins.push(s); unlockSkin(s); }
+                });
+            }
+            if (currentSkin === 'default' && typeof cloud.currentSkin === 'string' && unlockedSkins.includes(cloud.currentSkin)) {
+                selectSkin(cloud.currentSkin);
+            }
+            unlockSkinsUpToMeters(maxMetersReached);
+            updateProgressBar();
+            return before !== JSON.stringify(getCloudSnapshot());
+        }
+
+        async function pushCloudProgress() {
+            const client = getGldClient();
+            if (!client || !gldCloudUserId) return;
+            const { error } = await client.from('star_jump_progress').upsert({
+                user_id: gldCloudUserId, progress: getCloudSnapshot(), updated_at: new Date().toISOString()
+            });
+            if (error) console.warn('No se pudo guardar el progreso de Star Jump en la nube:', error.message);
+        }
+
+        function scheduleCloudSave() {
+            if (!gldCloudUserId) return;
+            clearTimeout(gldCloudTimer);
+            gldCloudTimer = setTimeout(pushCloudProgress, GLD_CLOUD_SAVE_DELAY);
+        }
+
+        // Descarga el progreso de la nube, lo une con el local y sube el resultado
+        async function syncCloudProgress() {
+            const client = getGldClient();
+            if (!client || !gldCloudUserId) return false;
+            const { data, error } = await client.from('star_jump_progress')
+                .select('progress').eq('user_id', gldCloudUserId).maybeSingle();
+            if (error) { console.warn('No se pudo leer el progreso de Star Jump en la nube:', error.message); return false; }
+            const changed = mergeCloudProgress(data && data.progress);
+            saveGameData();
+            await pushCloudProgress();
+            return changed;
+        }
+
+        // Al abrir el juego: si hay sesión de GlD guardada, sincroniza en segundo plano
+        async function restoreGldSession() {
+            if (!gldLink) return;
+            const client = getGldClient();
+            if (!client) return;
+            try {
+                const { data } = await client.auth.getSession();
+                const user = data && data.session && data.session.user;
+                if (!user) return;
+                gldCloudUserId = user.id;
+                await syncCloudProgress();
+            } catch (e) {
+                console.warn('No se pudo restaurar la sesión de Glob Defenders:', e);
+            }
+        }
+
+        async function unlinkGlobDefenders() {
+            if (!gldLink) { alert(gldText('This Star Jump is not linked to any GlD account.', 'Este Star Jump no está vinculado a ninguna cuenta de GlD.')); return; }
+            if (!confirm(gldText(
+                `Unlink ${gldLink.username}? Your progress stays on this device and in the cloud.`,
+                `¿Desvincular ${gldLink.username}? Tu progreso se queda en este dispositivo y en la nube.`))) return;
+            await pushCloudProgress().catch(() => {});
+            const client = getGldClient();
+            if (client) { try { await client.auth.signOut({ scope: 'local' }); } catch (_) {} }
+            gldLink = null; gldCloudUserId = null; clearTimeout(gldCloudTimer);
+            saveGameData();
+            alert(gldText('Glob Defenders account unlinked.', 'Cuenta de Glob Defenders desvinculada.'));
         }
 
         function askLinkGlobDefenders(username) {
             if (gldLink && gldLink.username.toLowerCase() === username.toLowerCase()) {
                 if (!confirm(gldText(
-                    `This Star Jump is already linked to ${gldLink.username}. Sync your best altitude again?`,
-                    `Este Star Jump ya está vinculado a ${gldLink.username}. ¿Quieres volver a sincronizar tu mejor altitud?`))) return;
-            } else if (!confirm(gldText(
+                    `This Star Jump is already linked to ${gldLink.username}. Sign in again to sync your progress?`,
+                    `Este Star Jump ya está vinculado a ${gldLink.username}. ¿Quieres volver a iniciar sesión para sincronizar tu progreso?`))) return;
+            } else if (gldLink && !confirm(gldText(
+                `This Star Jump is linked to ${gldLink.username}. Switch to "${username}"?`,
+                `Este Star Jump está vinculado a ${gldLink.username}. ¿Cambiar a "${username}"?`))) {
+                return;
+            } else if (!gldLink && !confirm(gldText(
                 `Do you want to link your Glob Defenders account "${username}" to Star Jump?\n\nYou'll get rewards in both games.`,
                 `¿Quieres vincular tu cuenta de Glob Defenders "${username}" a Star Jump?\n\nObtendrás recompensas en los dos juegos.`))) return;
             openGldModal(username);
@@ -1857,9 +1961,9 @@
             try {
                 // Mismo formato de cuenta que usa Glob Defenders
                 const email = `${username.toLowerCase()}@accounts.glob-defenders.invalid`;
-                const { error: loginError } = await client.auth.signInWithPassword({ email, password });
+                const { data: login, error: loginError } = await client.auth.signInWithPassword({ email, password });
                 passwordInput.value = '';
-                if (loginError) {
+                if (loginError || !login || !login.user) {
                     status.textContent = gldText('Wrong username or password.', 'Usuario o contraseña incorrectos.');
                     button.disabled = false;
                     return;
@@ -1872,24 +1976,30 @@
                 }
 
                 gldLink = { username, linkedAt: data.linkedAt, bestMeters: data.bestMeters };
+                gldCloudUserId = login.user.id;
                 const isNewSkin = !unlockedSkins.includes(GLD_REWARD_SKIN);
                 if (isNewSkin) { unlockedSkins.push(GLD_REWARD_SKIN); unlockSkin(GLD_REWARD_SKIN); }
+                status.textContent = gldText('Syncing your progress...', 'Sincronizando tu progreso...');
+                const cloudChanged = await syncCloudProgress();
                 updateProgressBar();
                 saveGameData();
                 closeGldModal();
                 alert(gldText(
                     `Account linked with ${username}!` + (isNewSkin ? `\n\nStar Jump: you unlocked ${getSkinName(GLD_REWARD_SKIN)}.` : '') +
+                    (cloudChanged ? `\nYour cloud progress was restored.` : '') +
+                    `\nYour meters and skins are now saved in your GlD account.` +
                     `\nGlob Defenders: sign in to get the Star Leap badge.`,
                     `¡Cuenta vinculada con ${username}!` + (isNewSkin ? `\n\nStar Jump: has desbloqueado ${getSkinName(GLD_REWARD_SKIN)}.` : '') +
+                    (cloudChanged ? `\nSe ha recuperado tu progreso de la nube.` : '') +
+                    `\nTus metros y skins se guardan ahora en tu cuenta de GlD.` +
                     `\nGlob Defenders: inicia sesión para recibir el emblema Salto Estelar.`));
             } catch (e) {
                 console.error('Error al vincular con Glob Defenders:', e);
                 status.textContent = gldText('The account could not be linked right now. Try again later.',
                                              'No se pudo vincular la cuenta ahora mismo. Inténtalo más tarde.');
                 button.disabled = false;
-            } finally {
-                // No mantener la sesión de GlD abierta en Star Jump
-                try { await client.auth.signOut({ scope: 'local' }); } catch (_) {}
+                // Si la vinculación falla, no dejar una sesión a medias
+                if (!gldCloudUserId) { try { await client.auth.signOut({ scope: 'local' }); } catch (_) {} }
             }
         }
 
@@ -2144,6 +2254,7 @@
         function saveGameData() {
             const data = { highScore, totalMeters, maxMetersReached, unlockedSkins, currentSkin, currentLanguage, gldLink };
             try { localStorage.setItem('starJumpSave', JSON.stringify(data)); } catch(e) { console.error(e); }
+            scheduleCloudSave(); // si hay cuenta de GlD vinculada, también a la nube
         }
 
         function loadGameData() {
@@ -2183,7 +2294,13 @@
         }
 
         function resetGameData() {
-            highScore = 0; totalMeters = 0; maxMetersReached = 0; unlockedSkins = ['default']; currentSkin = 'default'; gldLink = null;
+            highScore = 0; totalMeters = 0; maxMetersReached = 0; unlockedSkins = ['default']; currentSkin = 'default';
+            // Resetear desvincula en este dispositivo (sin tocar el progreso guardado en la nube)
+            if (gldLink || gldCloudUserId) {
+                gldLink = null; gldCloudUserId = null; clearTimeout(gldCloudTimer);
+                const client = getGldClient();
+                if (client) client.auth.signOut({ scope: 'local' }).catch(() => {});
+            }
             document.querySelectorAll('.skin-card').forEach(card => {
                 if (card.getAttribute('data-skin') !== 'default') {
                     card.classList.add('locked');
@@ -2291,7 +2408,12 @@
             difficultyIndicator.style.display = 'none';
             loadGameData();
             changeLanguage();
+            restoreGldSession();
             window.addEventListener('beforeunload', saveGameData);
+            // Al cambiar de pestaña o cerrar en móvil, sube ya el progreso pendiente
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'hidden' && gldCloudUserId) { clearTimeout(gldCloudTimer); pushCloudProgress(); }
+            });
             setInterval(() => { if (gameRunning) saveGameData(); }, 30000);
         });
     </script>
