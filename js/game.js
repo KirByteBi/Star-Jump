@@ -515,6 +515,7 @@
         // ===== Colaboración Glob Defenders x Star Jump =====
         const GLD_USERNAME_PATTERN = /^[A-Za-z0-9_.-]{3,24}$/;
         const GLD_REWARD_SKIN = 'gld_link';
+        const GLD_BOTH_SKIN = 'globstar';
         let gldLink = null; // { username, linkedAt, bestMeters }
         let gldClient = null;
 
@@ -592,7 +593,15 @@
             const { data, error } = await client.from('star_jump_progress')
                 .select('progress').eq('user_id', gldCloudUserId).maybeSingle();
             if (error) { console.warn('No se pudo leer el progreso de Star Jump en la nube:', error.message); return false; }
-            const changed = mergeCloudProgress(data && data.progress);
+            let changed = mergeCloudProgress(data && data.progress);
+            // GlobStar: Glob Defenders también se ha vinculado con esta cuenta
+            const { data: link } = await client.from('star_jump_links')
+                .select('gld_confirmed_at').eq('user_id', gldCloudUserId).maybeSingle();
+            if (link && link.gld_confirmed_at && !unlockedSkins.includes(GLD_BOTH_SKIN)) {
+                unlockedSkins.push(GLD_BOTH_SKIN); unlockSkin(GLD_BOTH_SKIN); changed = true;
+                alert(gldText(`Glob Defenders is linked back! You unlocked ${getSkinName(GLD_BOTH_SKIN)}.`,
+                              `¡Glob Defenders también está vinculado! Has desbloqueado ${getSkinName(GLD_BOTH_SKIN)}.`));
+            }
             saveGameData();
             await pushCloudProgress();
             return changed;
